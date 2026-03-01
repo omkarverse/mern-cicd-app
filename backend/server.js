@@ -14,10 +14,7 @@ app.use(express.json());
 
 // Database connection
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/mern-cicd';
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
+mongoose.connect(mongoURI).then(() => console.log('MongoDB connected'))
     .catch(err => console.log('MongoDB connection error:', err));
 
 // Routes
