@@ -9,6 +9,14 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  environment: {
+    type: String,
+    default: 'Development'
+  },
+  region: {
+    type: String,
+    default: 'us-east-1'
+  },
   status: {
     type: String,
     enum: ['Pending', 'In Progress', 'Completed'],

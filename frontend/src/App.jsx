@@ -9,6 +9,9 @@ function App() {
   const [resources, setResources] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [environment, setEnvironment] = useState('Development');
+  const [region, setRegion] = useState('us-east-1');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,10 +33,13 @@ function App() {
     e.preventDefault();
     if (!title || !description) return;
     try {
-      const { data } = await axios.post(`${API_URL}/resources`, { title, description });
+      // Note: we are sending environment and region, though backend schema only expects title/desc/status right now.
+      // We will update backend schema to accept these new fields.
+      const { data } = await axios.post(`${API_URL}/resources`, { title, description, environment, region });
       setResources([data, ...resources]);
       setTitle('');
       setDescription('');
+      setEnvironment('Development');
     } catch (err) {
       console.error('Error adding resource:', err);
     }
@@ -59,12 +65,17 @@ function App() {
     }
   };
 
+  const filteredResources = resources.filter(res =>
+    res.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    res.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="app-container">
       <header className="glass-header">
         <Server className="icon header-icon" />
-        <h1>Cloud Resource Tracker</h1>
-        <p>Manage your deployment assets dynamically</p>
+        <h1>Premium Resource Tracker</h1>
+        <p>Enterprise-Grade Deployment Management</p>
       </header>
 
       <main className="main-content">
@@ -87,27 +98,57 @@ function App() {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
-            <button type="submit" className="btn-primary">
+            <div className="input-row">
+              <div className="input-group">
+                <select value={environment} onChange={(e) => setEnvironment(e.target.value)}>
+                  <option value="Development">Development</option>
+                  <option value="Staging">Staging</option>
+                  <option value="Production">Production</option>
+                </select>
+              </div>
+              <div className="input-group">
+                <select value={region} onChange={(e) => setRegion(e.target.value)}>
+                  <option value="us-east-1">US East (N. Virginia)</option>
+                  <option value="eu-central-1">EU Central (Frankfurt)</option>
+                  <option value="ap-south-1">AP South (Mumbai)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" className="btn-primary pulse-hover">
               <PlusCircle className="icon" /> Add Resource
             </button>
           </form>
         </section>
 
         <section className="list-section">
-          <h2>Active Resources</h2>
+          <div className="section-header">
+            <h2>Active Resources</h2>
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search resources..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
           {loading ? (
             <div className="loading">Loading assets...</div>
           ) : resources.length === 0 ? (
-            <div className="empty-state glass-panel">No resources tracked yet. Add one above!</div>
+            <div className="empty-state glass-panel">No resources found.</div>
           ) : (
             <div className="resource-grid">
-              {resources.map((resource) => (
-                <div key={resource._id} className="resource-card glass-panel">
+              {filteredResources.map((resource) => (
+                <div key={resource._id} className="resource-card glass-panel interactive-card">
                   <div className="card-header">
                     <h3>{resource.title}</h3>
                     <span className={`status-badge ${resource.status.toLowerCase().replace(' ', '-')}`}>
                       {resource.status}
                     </span>
+                  </div>
+                  <div className="meta-tags">
+                    <span className="tag env-tag">{resource.environment || 'Development'}</span>
+                    <span className="tag region-tag">{resource.region || 'us-east-1'}</span>
                   </div>
                   <p className="card-desc">{resource.description}</p>
 
