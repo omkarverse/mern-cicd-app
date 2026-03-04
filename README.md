@@ -31,23 +31,23 @@ Implement a CI/CD pipeline that automatically builds, tests, and deploys the app
 
 ### Pipeline Execution
 
-![Pipeline](screenshots/1001.png)
+![Pipeline](screenshot/1001.png)
 
 ### Build Stage
 
-![Build](screenshots/1002.png)
+![Build](screenshot/1002.png)
 
 ### Test Stage
 
-![Test](screenshots/1003.png)
+![Test](screenshot/1003.png)
 
 ### Deployment Stage
 
-![Deploy](screenshots/1004.png)
+![Deploy](screenshot/1004.png)
 
 ### Final Output
 
-![Output](screenshots/1005.png)
+![Output](screenshot/1005.png)
 
 ## Installation
 
